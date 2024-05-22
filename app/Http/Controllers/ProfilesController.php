@@ -20,8 +20,9 @@ class ProfilesController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
         $friendCount = Friends::where('user_id', auth()->id())->count();
+        $notification = auth()->user()->notifications;
         // return response()->json(['friendCount' => $friendCount]);
-        return view('pages.profile', compact('posts', 'friendCount'));
+        return view('pages.profile', compact('posts', 'friendCount', 'notification'));
         // return $posts;
     }
     public function updateProfile(Request $request)

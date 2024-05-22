@@ -47,10 +47,11 @@ Route::put('userData/{id}', [PostsController::class, 'update'])->name('posts.upd
 Route::post('/toggle-like', [PostLikeController::class, 'toggleLike'])->name('posts.toggle-like');
 
 //comments
-Route::post('/comments', [PostCommentsController::class, 'store'])->name('comments.store');
-Route::get('/comments/{postId}', [PostCommentsController::class, 'fetchComments'])->name('comments.fetch');
-Route::put('/comments/{comment}', [PostCommentsController::class, 'update'])->name('comments.update');
-Route::delete('/comments/{comment}', [PostCommentsController::class, 'destroy'])->name('comments.destroy');
+// Route::post('/comments', [PostCommentsController::class, 'store'])->name('comments.store');
+// Route::get('/comments/{postId}', [PostCommentsController::class, 'fetchComments'])->name('comments.fetch');
+// Route::put('/comments/{comment}', [PostCommentsController::class, 'update'])->name('comments.update');
+// Route::delete('/comments/{comment}', [PostCommentsController::class, 'destroy'])->name('comments.destroy');
+Route::resource('comments', PostCommentsController::class)->only(['store', 'show', 'update', 'destroy']);
 
 //edit profile
 Route::post('/update-profile', [ProfilesController::class, 'updateProfile'])->name('updateProfile');
@@ -61,3 +62,19 @@ Route::post('/toggle-friend', [FriendsController::class, 'toggleFriend'])->name(
 
 //view friend
 Route::get('/fetch-friends', [FriendsController::class, 'fetchFriends'])->name('fetch-friends');
+
+Route::get('/notification ', [PostsController::class, 'index'])->name('notification');
+
+//Archived Post
+// Route::put('/posts/{id}/archive', [PostsController::class, 'archive'])->name('posts.archive');
+// Route::put('/posts/{id}/unarchive', [PostsController::class, 'unarchive'])->name('posts.unarchive');
+
+// Route::put('/posts/{id}/archive', 'PostsController@archive')->name('posts.archive');
+// Route::put('/posts/{id}/unarchive', 'PostsController@unarchive')->name('posts.unarchive');
+// Route::put('/posts/{id}/toggleArchive', 'PostController@toggleArchive')->name('posts.toggleArchive');
+Route::post('/post/archive', [PostLikeController::class, 'archive'])->name('archive');
+Route::post('/post/unarchive', [PostsController::class, 'unarchive'])->name('posts.unarchive');
+
+
+// Route::get('/get', [PostsController::class, 'get']);
+// Route::resource('posts', PostsController::class);

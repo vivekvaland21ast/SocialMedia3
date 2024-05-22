@@ -51,7 +51,12 @@ class FriendsController extends Controller
         // Pass the friends to the view
         return view('friends', ['friends' => $friends]);
     }
-
+    public function fetchFriends()
+    {
+        $user = Auth::user();
+        $friends = $user->friends; // Assuming you have a relationship defined on the User model
+        return response()->json(['friends' => $friends]);
+    }
     // public function archive($id)
     // {
     //     $post = Posts::find($id);

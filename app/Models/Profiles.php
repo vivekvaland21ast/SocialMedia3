@@ -6,10 +6,11 @@ use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User as AuthenticatableUser;
+use Illuminate\Notifications\Notifiable;
 
 class Profiles extends AuthenticatableUser implements Authenticatable
 {
-    use HasFactory;
+    use HasFactory, Notifiable;
     protected $table = 'profiles';
     protected $fillable = [
         'full_name',

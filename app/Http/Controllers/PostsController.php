@@ -18,7 +18,8 @@ class PostsController extends Controller
         // $posts = Posts::with('profile', 'likes')->where('archive', false)->orderBy('created_at', 'desc')->get();
         $posts = Posts::with('profile', 'likes')->orderBy('created_at', 'desc')->get();
         $friends = Profiles::where('id', '!=', Auth::id())->get();
-        return view('index', compact('posts', 'friends'));
+        $notification = auth()->user()->notifications;
+        return view('index', compact('posts', 'friends', 'notification'));
     }
 
     /**
@@ -94,22 +95,31 @@ class PostsController extends Controller
             return redirect()->route('profile')->with('error', 'Post not found');
         }
     }
-    // public function archive($id)
-    // {
-    //     $post = Posts::findOrFail($id);
-    //     $post->archive = true;
-    //     $post->save();
 
-    //     return response()->json(['message' => 'Post archived successfully']);
-    // }
+    public function archive(Request $request)
+    {
+        try {
+            $post = Posts::findOrFail($request->post_id);
+            // $postId = $request->postId;
+            $post->archive = true;
+            $post->save();
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            // Log::error('errordfgdfg', $e->getMessage());
+            // Log::error('request', $request->all());
+            return response()->json(['error' => false], 500);
+        }
 
-    // public function unarchive($id)
-    // {
-    //     $post = Posts::findOrFail($id);
-    //     $post->archive = false;
-    //     $post->save();
+    }
 
-    //     return response()->json(['message' => 'Post unarchived successfully']);
-    // }
+    public function unarchive($id)
+    {
+        $post = Posts::findOrFail($id);
+        $post->archive = false;
+        $post->save();
+
+        return response()->json(['message' => 'Post unarchived successfully']);
+    }
+
 
 }

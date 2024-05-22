@@ -8,48 +8,53 @@ use Illuminate\Http\Request;
 
 class PostCommentsController extends Controller
 {
+    
     public function store(Request $request)
     {
+        // $request->validate([
+        //     'body' => 'required|string',
+        //     'post_id' => 'required|exists:posts,id',
+        //     'parent_id' => 'nullable|exists:comments,id'
+        // ]);
 
-        Comments::create([
-            'user_id' => Auth::id(),
-            'post_id' => $request->post_id,
+        $comment = Comments::create([
             'body' => $request->body,
+            'post_id' => $request->post_id,
+            'user_id' => Auth::id(),
+            'parent_id' => $request->parent_id
         ]);
 
-        return response()->json(['message' => 'Comment added successfully.']);
+        return response()->json($comment, 201);
     }
 
-    public function fetchComments($postId)
+    public function show($id)
     {
-        $comments = Comments::where('post_id', $postId)->with('user')->get()->map(function ($comment) {
-            $comment->user->profile_url = asset('profile_images/' . $comment->user->profile);
-            return $comment;
-        });
+        $comments = Comments::with('user', 'replies.user')->where('post_id', $id)->whereNull('parent_id')->get();
+
         return response()->json($comments);
     }
 
-    public function update(Request $request, Comments $comment)
+    public function update(Request $request, $id)
     {
+        $comment = Comments::findOrFail($id);
+
         // $this->authorize('update', $comment);
 
-        // $request->validate([
-        //     'body' => 'required|string|max:255',
-        // ]);
+        $request->validate(['body' => 'required|string']);
 
-        $comment->update([
-            'body' => $request->body,
-        ]);
+        $comment->update(['body' => $request->body]);
 
         return response()->json($comment);
     }
 
-    public function destroy(Comments $comment)
+    public function destroy($id)
     {
+        $comment = Comments::findOrFail($id);
+
         // $this->authorize('delete', $comment);
 
         $comment->delete();
 
-        return response()->json(['message' => 'Comment deleted']);
+        return response()->json(['message' => 'Comment deleted successfully']);
     }
 }
