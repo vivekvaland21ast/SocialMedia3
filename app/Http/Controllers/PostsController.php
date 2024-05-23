@@ -16,9 +16,14 @@ class PostsController extends Controller
     public function index()
     {
         // $posts = Posts::with('profile', 'likes')->where('archive', false)->orderBy('created_at', 'desc')->get();
-        $posts = Posts::with('profile', 'likes')->orderBy('created_at', 'desc')->get();
+        $posts = Posts::with('profile', 'likes')->orderBy('created_at', 'desc')->where('archive', '0')->get();
         $friends = Profiles::where('id', '!=', Auth::id())->get();
         $notification = auth()->user()->notifications;
+        // $user = auth()->user();
+        // $user = Auth::id();
+        // dd($user->id);
+        // $notification = $user->notifications()->where('id', '!=', Auth::id())->get();
+        // dd($notification);
         return view('index', compact('posts', 'friends', 'notification'));
     }
 

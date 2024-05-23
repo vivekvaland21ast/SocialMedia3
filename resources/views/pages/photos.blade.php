@@ -20,26 +20,10 @@
     <div
         class="w-full border-2 bg-gray-900 rounded-lg shadow-xl shadow-gray-800 overflow-hidden flex flex-col justify-center items-center">
         <button
-            class="archived-btn h-8 px-5 mr-4 text-sm mt-2 font-bold text-blue-400 border border-blue-400 rounded-full hover:bg-blue-100 hover:text-black"
-            data-post-id="{{ $post->id }}" data-action="archive">
-            Archived
+            class="toggle-archive-btn h-8 px-5 mr-4 text-sm mt-2 font-bold {{ $post->archive ? 'text-red-400 border border-red-400 rounded-full hover:bg-red-100 hover:text-black' : 'text-blue-400 border border-blue-400 rounded-full hover:bg-blue-100 hover:text-black' }}"
+            data-post-id="{{ $post->id }}" data-archived="{{ $post->archive ? 'true' : 'false' }}">
+            {{ $post->archive ? 'Unarchived' : 'Archived' }}
         </button>
-        {{-- <button
-            class="unarchived-btn h-8 px-5 mr-4 text-sm font-bold text-red-400 border border-red-400 rounded-full hover:bg-red-100 hover:text-black"
-            data-post-id="{{ $post->id }}" data-action="unarchive" style="display: none;">
-            Unarchived
-        </button> --}}
-        {{-- <button
-            class="archived-btn h-8 px-5 mr-4 text-sm mt-2 font-bold text-blue-400 border border-blue-400 rounded-full hover:bg-blue-100 hover:text-black"
-            data-post-id="{{ $post->id }}" data-action="archive">
-            Archived
-        </button> --}}
-
-        {{-- <button
-            class="unarchived-btn h-8 px-5 mr-4 text-sm font-bold text-red-400 border border-red-400 rounded-full hover:bg-red-100 hover:text-black"
-            data-post-id="{{ $post->id }}" data-action="unarchive" style="display: none;">
-            Unarchived
-        </button> --}}
         <div class="relative">
             <img class="object-center object-cover h-40 p-5 w-full"
                 src="{{ asset('post_images/' . $post->post_image) }}" alt="photo">
@@ -156,51 +140,6 @@
     }
 </script>
 
-{{-- List of friend --}}
-{{-- <script>
-    $(document).ready(function() {
-        // Fetch friends from the database when the modal is opened
-        $('.modal-toggle').change(function() {
-            if ($(this).is(":checked")) {
-                $.ajax({
-                    url: "{{ route('fetch-friends') }}", // Adjust the route
-                    type: 'GET',
-                    success: function(response) {
-                        // Clear previous content
-                        $('#added-friends-list').empty();
-
-                        // Append each friend to the list
-                        response.friends.forEach(function(friend) {
-                            // Construct the HTML for each friend using a template literal
-                            var friendHtml = `
-                                <div id="list-${friend.id}"
-                                    class="scrollbar-y-auto scrollbar-hide overflow-auto p-2 flex items-center bg-white dark:bg-gray-900 justify-between cursor-pointer hover:bg-gray-700">
-                                    <div class="flex items-center">
-                                        <img class="h-12 w-12 rounded-full border-4 border-white dark:border-gray-800 mx-auto my-4"
-                                            src="'profile_images/${friend.profile}" alt="Profile Image" />
-                                        <div class="ml-2 flex flex-col">
-                                            <div class="leading-snug text-sm text-gray-200 font-bold">
-                                                ${friend.username}
-                                            </div>
-                                            <div class="leading-snug text-xs text-gray-600">
-                                                @${friend.full_name}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            `;
-                            // Append the constructed HTML to the list
-                            $('#added-friends-list').append(friendHtml);
-                        });
-                    },
-                    error: function(xhr, status, error) {
-                        console.error(error);
-                    }
-                });
-            }
-        });
-    });
-</script> --}}
 
 {{-- friend list --}}
 <script>
@@ -244,70 +183,60 @@
 
 {{-- archived --}}
 <script>
-    const archiveUrl = "{{ route('archive') }}";
-    $(document).on("click", ".archived-btn", function(e) {
-        e.preventDefault();
-        let postId = $(this).data("post-id");
-        // console.log(postId);
-        let archiveUrl = base_url + "post/archive";
-        console.log(archiveUrl);
-        $.ajax({
-            url: archiveUrl,
-            type: "POST",
-            data: {
-                postId: postId,
-                _token: $('meta[name="csrf-token"]').attr("content"),
-            },
-            success: function(response) {
-                if (response.success) {
-                    alert('Post archived successfully');
-                    // Optional: Reload or update the page content
-                } else {
-                    alert('Failed to archive post: ' + response.message);
-                }
-            },
-            error: function(xhr, status, error) {
-                console.error('Archive error:', status, error);
-                alert('An error occurred while archiving the post.');
-            }
+    document.addEventListener('DOMContentLoaded', function() {
+        const buttons = document.querySelectorAll('.toggle-archive-btn');
+
+        buttons.forEach(button => {
+            button.addEventListener('click', function() {
+                const postId = this.dataset.postId;
+                const isArchived = this.dataset.archived === 'true';
+
+                // Toggle the state
+                const newArchivedState = !isArchived;
+
+                // Send an AJAX request to update the state in the backend
+                $.ajax({
+                    url: newArchivedState ? '{{ route('archive') }}' :
+                        '{{ route('unarchive') }}',
+                    type: 'POST',
+                    data: {
+                        postId: postId,
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            // Update the button state
+                            button.dataset.archived = newArchivedState;
+                            button.textContent = newArchivedState ? 'Unarchived' :
+                                'Archived';
+
+                            // Toggle classes for appearance change
+                            if (newArchivedState) {
+                                button.classList.remove('text-blue-400',
+                                    'border-blue-400', 'hover:bg-blue-100',
+                                    'hover:text-black');
+                                button.classList.add('text-red-400',
+                                    'border-red-400', 'hover:bg-red-100',
+                                    'hover:text-black');
+                            } else {
+                                button.classList.remove('text-red-400',
+                                    'border-red-400', 'hover:bg-red-100',
+                                    'hover:text-black');
+                                button.classList.add('text-blue-400',
+                                    'border-blue-400', 'hover:bg-blue-100',
+                                    'hover:text-black');
+                            }
+                        } else {
+                            alert('Failed to update the post state: ' + response
+                                .message);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error updating post state:', error);
+                        alert('Failed to update the post state.');
+                    }
+                });
+            });
         });
     });
 </script>
-
-{{-- <script>
-    $('.archived-btn').click(function() {
-        let postId = $(this).data('post-id');
-        // console.log(postId);
-        $.ajax({
-            url: "{{ route('posts.archive') }}",
-            type: 'POST',
-            data: {
-                id: postId,
-            }
-            success: function(response) {
-                $('.archived-btn').hide();
-                $('.unarchived-btn').show();
-                alert(response.message);
-            },
-            error: function(xhr, status, error) {
-                alert('Failed to archive post');
-            }
-        });
-    });
-
-    $('.unarchived-btn').click(function() {
-        let postId = $(this).data('post-id');
-        $.ajax({
-            url: `/posts/${postId}/unarchive`,
-            type: 'PUT',
-            success: function(response) {
-                $('.archived-btn').show();
-                $('.unarchived-btn').hide();
-                alert(response.message);
-            },
-            error: function(xhr, status, error) {
-                alert('Failed to unarchive post');
-            }
-        });
-    });
-</script> --}}

@@ -40,19 +40,4 @@ class PostLikeController extends Controller
         $totalLikes = Likes::where('post_id', $postId)->count();
         return response()->json(['total_likes' => $totalLikes, 'liked' => $liked]);
     }
-    // public function archive(Request $request)
-    // {
-    //     try {
-    //         $post = Posts::findOrFail($request->post_id);
-    //         // $postId = $request->postId;
-    //         $post->archive = true;
-    //         $post->save();
-    //         return response()->json(['success' => true]);
-    //     } catch (\Exception $e) {
-    //         Log::error('errordfgdfg', $e->getMessage());
-    //         Log::error('request', $request->all());
-    //         return response()->json(['error' => false], 500);
-    //     }
-
-    // }
 }
