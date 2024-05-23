@@ -79,7 +79,7 @@
             <div id="comment-${comment.id}" class="chat ${isAuthUser ? 'chat-end' : 'chat-start'}" data-comment-id="${comment.id}" ${parentId ? 'style="margin-right: 20px;"' : ''}>
                 <div class="chat-image avatar">
                     <div class="w-10 rounded-full">
-                        <img src="${comment.user.profile_url}" alt="User image">
+                        <img src="/profile_images/${comment.user.profile}" alt="User image">
                     </div>
                 </div>
                 <div class="chat-header">

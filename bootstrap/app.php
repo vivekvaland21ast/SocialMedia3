@@ -15,7 +15,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias([
             'auth' => \Illuminate\Auth\Middleware\Authenticate::class,
-            'authenticate' => EnsureUserIsAuthenticated::class,
+            // 'authenticate' => EnsureUserIsAuthenticated::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

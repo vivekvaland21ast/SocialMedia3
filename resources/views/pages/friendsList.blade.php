@@ -15,7 +15,7 @@
                                 <div class="leading-snug text-sm text-gray-200 font-bold">
                                     {{ $friend->full_name }}
                                 </div>
-                                <div class="leading-snug text-xs text-gray-600">
+                                <div class="leading-snug text-sm text-gray-600  dark:text-gray-400">
                                     {{ '@' . $friend->username }}
                                 </div>
                             </div>

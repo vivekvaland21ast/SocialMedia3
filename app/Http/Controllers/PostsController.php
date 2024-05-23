@@ -59,6 +59,29 @@ class PostsController extends Controller
         return redirect()->back()->with('success', 'Post created successfully.');
     }
 
+    // public function store(Request $request)
+    // {
+    //     $imageName = null;
+
+    //     if ($request->hasFile('imageFile')) {
+    //         $imageName = time() . '_' . $request->file('imageFile')->getClientOriginalName();
+    //         $request->file('imageFile')->move(public_path('post_images'), $imageName);
+    //     }
+
+    //     $post = new Posts();
+    //     $post->post_caption = $request->input('captionText', '');
+    //     $post->post_image = $imageName;
+    //     $post->user_id = auth()->id();
+    //     $post->save();
+
+    //     // Return JSON response with success and post data
+    //     return response()->json([
+    //         'success' => true,
+    //         'post' => $post, // Send the newly created post data
+    //     ]);
+    // }
+
+
     /**
      * Display the specified resource.
      */

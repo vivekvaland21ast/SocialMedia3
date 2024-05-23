@@ -17,15 +17,20 @@ class EnsureUserIsAuthenticated
     public function handle(Request $request, Closure $next)
     {
 
-        if (!Auth::check()) {
-            return redirect()->route('login')->withErrors(['error' => 'You must be logged in to access this page.']);
+        // if (!Auth::check()) {
+        //     return redirect()->route('login')->withErrors(['error' => 'You must be logged in to access this page.']);
+        // }
+
+
+        // if (Auth::check() && ($request->routeIs('login') || $request->routeIs('register'))) {
+        //     return redirect()->route('home');
+        // }
+
+        // return $next($request);
+
+        if (!$request->expectsJson()) {
+            return route('login');
         }
 
-
-        if (Auth::check() && ($request->routeIs('login') || $request->routeIs('register'))) {
-            return redirect()->route('home');
-        }
-
-        return $next($request);
     }
 }

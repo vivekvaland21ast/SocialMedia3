@@ -50,6 +50,10 @@
     cursor: pointer;
 }
 
+.liked {
+    background-color: red;
+}
+
 /* Styles for mobile menu */
 #navbarMenu {
     display: none;

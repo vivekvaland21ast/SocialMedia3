@@ -44,34 +44,6 @@
         </svg>
 
     </label>
-    <!-- notification -->
-    {{-- <details class="dropdown">
-        <summary class="m-1 btn btn-ghost btn-circle">
-            <div class="indicator">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-                </svg>
-                <span class="badge badge-xs badge-primary indicator-item">8</span>
-            </div>
-        </summary>
-        <ul class="p-2 shadow menu dropdown-content z-[1] bg-base-100 rounded-box" style="width: 300px; padding: 10px">
-            <div class='flex flex-col gap-3'>
-                <div class="relative border border-gray-200 rounded-lg shadow-lg">
-                    <div class="flex items-center p-4">
-                        <img class="object-cover w-12 h-12 rounded-lg" src="user profile" alt="" />
-                        <div class="ml-3 overflow-hidden">
-                            <p class="font-medium text-white-900">user name</p>
-                            <p class="max-w-xs text-sm text-gray-500 truncate">
-                                user liked your post
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </ul>
-    </details> --}}
 
     {{-- Logout --}}
     <form method="POST" action="{{ route('logout') }}">
@@ -98,6 +70,8 @@
                 <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
             </form>
             <h3 class="font-bold text-lg">Upload your post</h3>
+
+            {{-- old --}}
             <form id="postForm" class="p-4 md:p-5" action="{{ route('posts.store') }}" method="POST"
                 enctype="multipart/form-data">
                 @csrf
@@ -122,6 +96,32 @@
                     Post
                 </button>
             </form>
+
+            {{-- ajax --}}
+            {{-- <form id="postForm" class="p-4 md:p-5" action="{{ route('posts.store') }}" method="POST"
+                enctype="multipart/form-data">
+                @csrf
+                <div class="grid gap-4 mb-4 grid-cols-2">
+                    <div class="col-span-2">
+                        <input type="file" name="imageFile"
+                            class="file-input file-input-bordered file-input-primary w-full file-input-sm max-w-xs" />
+                    </div>
+                    <div class="col-span-2">
+                        <textarea id="description" rows="4" name="captionText"
+                            class="textarea textarea-primary block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-blue-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            placeholder="What's on your mind!!!"></textarea>
+                    </div>
+                </div>
+                <button type="submit" name="post" class="btn btn-outline btn-primary">
+                    <svg class="me-1 -ms-1 w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd"
+                            d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
+                            clip-rule="evenodd"></path>
+                    </svg>
+                    Post
+                </button>
+            </form> --}}
         </div>
     </dialog>
 </div>
@@ -262,6 +262,79 @@
                     alert('Error creating post. Please try again.');
                 }
             });
+        });
+    });
+</script> --}}
+
+{{-- insert validation --}}
+<script>
+    $(document).ready(function() {
+        // Initialize form validation
+        $("#postForm").validate({
+            rules: {
+                imageFile: {
+                    required: true,
+                    extension: "jpg|jpeg|png"
+                },
+                captionText: {
+                    required: true,
+                    minlength: 5
+                }
+            },
+            messages: {
+                imageFile: {
+                    required: "Please upload an image file",
+                    extension: "Allowed file extensions: jpg, jpeg, png, gif"
+                },
+                captionText: {
+                    required: "Please enter a caption",
+                    minlength: "Your caption must be at least 5 characters long"
+                }
+            },
+            errorPlacement: function(error, element) {
+                error.addClass("text-sm text-red-600 mt-1");
+                error.insertAfter(element);
+            },
+            highlight: function(element, errorClass, validClass) {
+                $(element).addClass("border-red-600");
+            },
+            unhighlight: function(element, errorClass, validClass) {
+                $(element).removeClass("border-red-600");
+            }
+        });
+    });
+</script>
+
+{{-- insert using ajax --}}
+{{-- <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var postForm = document.getElementById('postForm');
+
+        postForm.addEventListener('submit', function(e) {
+            e.preventDefault(); // Prevent default form submission
+
+            var formData = new FormData(postForm); // Create form data object
+
+            // Send AJAX request
+            fetch(postForm.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}', // Add CSRF token to headers
+                    },
+                })
+                .then(response => response.json()) // Parse response as JSON
+                .then(data => {
+                    // Handle response data here (e.g., show success message)
+                    alert(data.message); // Example: show a success message
+                    // Clear form inputs if needed
+                    postForm.reset();
+                })
+                .catch(error => {
+                    console.error('Error:', error); // Log any errors
+                    // Handle errors (e.g., show error message)
+                    alert('An error occurred while processing your request. Please try again.');
+                });
         });
     });
 </script> --}}

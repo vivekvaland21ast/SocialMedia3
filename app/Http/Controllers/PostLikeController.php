@@ -33,7 +33,9 @@ class PostLikeController extends Controller
 
             $postOwner = $post->profile;
             $liker = Auth::user();
-            $postOwner->notify(new LikeNotification($post, $liker));
+            if (auth()->user()->id != $postOwner->id) {
+                $postOwner->notify(new LikeNotification($post, $liker));
+            }
             $liked = true;
         }
 

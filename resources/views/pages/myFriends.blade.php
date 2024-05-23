@@ -9,7 +9,3 @@
     <div class="stat-title font-semibold text-gray-200">Friends</div>
     <div class="text-warning">{{ $friendCount }}</div>
 </div>
-<!-- The button to open modal -->
-
-
-<!-- Put this part before </body> tag -->

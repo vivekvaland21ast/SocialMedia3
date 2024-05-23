@@ -79,7 +79,7 @@
                     <div class="grid gap-4 mb-4 grid-cols-2">
                         <div class="col-span-2">
                             <input type="file" name="imageFile" id="imageFile"
-                                value="{{ asset('profile_images/' . $post->profile) }}"
+                                value="{{ asset('post_images/' . $post->post_image) }}"
                                 class="file-input file-input-bordered file-input-primary w-full file-input-sm max-w-xs" />
                         </div>
                         <div class="col-span-2">
@@ -240,3 +240,5 @@
         });
     });
 </script>
+
+
